@@ -35,9 +35,9 @@ router.get("/", (req, res) => {
 // })
 
 router.post("/register", async (req, res) => {
-  const { name, email,phone, password, cpassword } = req.body;
+  const { name, email,phone, password, cpassword,role } = req.body;
 
-  if (!name || !email || !phone || !password || !cpassword) {
+  if (!name || !email || !phone || !password || !cpassword || !role) {
     return res.status(422).json({ error: "plz enter detail properly" });
   }
   try {
@@ -47,7 +47,7 @@ router.post("/register", async (req, res) => {
     } else if (password != cpassword) {
       return res.status(422).json({ error: "password are not matching" });
     } else {
-      const user = new User({ name, email,phone, password, cpassword });
+      const user = new User({ name, email,phone, password, cpassword,role});
       await user.save();
       res.status(201).json({ message: "User register successfully" });
     }
@@ -78,7 +78,13 @@ router.post("/signIn", async (req, res) => {
             if(!isMatch){
                 res.status(400).json({error: "Invalid credentials pass"});
             }else {
-                res.json({message: "user SignIn Successfully"})
+              const payload={
+                email: userLogin.email,
+                phone: userLogin.phone,
+                role: userLogin.role
+              }
+              console.log(userLogin);
+                res.json(payload)
             }
         }
         else {
